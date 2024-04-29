@@ -49,7 +49,7 @@ force_btn = InlineKeyboardMarkup(
 
 
 
-async def check_is_joined(message):    
+async def must_join_channel(message):    
 
     try:
 
