@@ -37,7 +37,7 @@ force_btn = InlineKeyboardMarkup(
 
             InlineKeyboardButton(
 
-                text="Link .", url=f"{muntazer}"
+                text="Link .", url=f"{Muntazer}"
 
             ),                        
 
@@ -55,7 +55,7 @@ async def check_is_joined(message):
 
         userid = message.from_user.id
 
-        status = await app.get_chat_member(f"{muntazer}", userid)
+        status = await app.get_chat_member(f"{Muntazer}", userid)
 
         return True
 
