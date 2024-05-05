@@ -30,8 +30,6 @@ from AarohiX.utils.stream.stream import stream
 from config import BANNED_USERS, lyrical
 from config import Muntazer
 from pyrogram import types
-from pyrogram.types import ChatType
-from pyrogram.types import UserNotParticipant, ChatAdminRequired
 from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram import Client
 
@@ -91,7 +89,7 @@ async def play_commnd(
     fplay,
 ):
     # تجاهل رسالة الاشتراك في حالة القناة
-    if message.chat.type == ChatType.CHANNEL:
+    if message.chat.type == "channel":
         return
     
     mystic = await message.reply_text(
