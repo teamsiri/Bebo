@@ -29,6 +29,11 @@ from AarohiX.utils.logger import play_logs
 from AarohiX.utils.stream.stream import stream
 from config import BANNED_USERS, lyrical
 from config import Muntazer
+from pyrogram import types
+from pyrogram.types import ChatType
+from pyrogram.types import UserNotParticipant, ChatAdminRequired
+from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
+from pyrogram import Client
 
 async def must_join_channel(app, msg):
     if not Muntazer:
@@ -86,7 +91,7 @@ async def play_commnd(
     fplay,
 ):
     # تجاهل رسالة الاشتراك في حالة القناة
-    if isinstance(message.chat, types.Channel):
+    if message.chat.type == ChatType.CHANNEL:
         return
     
     mystic = await message.reply_text(
