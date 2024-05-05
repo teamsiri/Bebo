@@ -88,9 +88,9 @@ async def play_commnd(
     url,
     fplay,
 ):
-    # تجاهل رسالة الاشتراك في حالة القناة
-    if message.chat.type == "channel":
-        return
+    # تحقق من الاشتراك في المجموعة
+    if isinstance(message.chat, types.Group):
+        await must_join_channel(client, message)
     
     mystic = await message.reply_text(
         _["play_2"].format(channel) if channel else _["play_1"]
