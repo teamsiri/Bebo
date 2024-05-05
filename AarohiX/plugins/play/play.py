@@ -37,7 +37,7 @@ async def must_join_channel(app, msg):
     if not Muntazer:
         return
     try:
-        if isinstance(msg.chat, types.Group):
+        if isinstance(msg.chat, types.Chat) and msg.chat.type == "group":
             try:
                 await app.get_chat_member(Muntazer, msg.from_user.id)
             except UserNotParticipant:
@@ -89,7 +89,7 @@ async def play_commnd(
     fplay,
 ):
     # تحقق من الاشتراك في المجموعة
-    if isinstance(message.chat, types.Group):
+    if isinstance(message.chat, types.Chat) and message.chat.type == "group":
         await must_join_channel(client, message)
     
     mystic = await message.reply_text(
