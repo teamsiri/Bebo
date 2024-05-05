@@ -97,11 +97,14 @@ async def play_commnd(
     if message.chat.type == "group":
         # إذا كانت المحادثة في مجموعة، قم بالتحقق من اشتراك المستخدم في القناة المطلوبة
         await must_join_channel(client, message)
-
-    # رسالة الاستجابة للمستخدم أثناء عملية التشغيل
-    mystic = await message.reply_text(
-        _["play_2"].format(channel) if channel else _["play_1"]
-    )
+        
+        # رسالة الاستجابة للمستخدم أثناء عملية التشغيل
+        mystic = await message.reply_text(
+            _["play_2"].format(channel) if channel else _["play_1"]
+        )
+    else:
+        # إذا لم تكن المحادثة في مجموعة، فلا يوجد حاجة لرسالة التحقق
+        mystic = None
     
     # تعريف المتغيرات الأخرى المستخدمة في الدالة
     plist_id = None
