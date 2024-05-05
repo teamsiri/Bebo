@@ -430,7 +430,6 @@ async def play_commnd(
             ex_type = type(e).__name__
             err = e if ex_type == "AssistantErr" else _["general_2"].format(ex_type)
             return await mystic.edit_text(err)
-        await mystic.delete()
         return await play_logs(message, streamtype=streamtype)
     else:
         if plist_type:
