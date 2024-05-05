@@ -1,10 +1,5 @@
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from ast import ExceptHandler
-from pyrogram import filters
-from pyrogram.types import InlineKeyboardMarkup, InputMediaPhoto, Message
 import random
 import string
-from pyrogram import types
 from strings.filters import command
 from pyrogram import filters
 from pyrogram.types import InlineKeyboardMarkup, InputMediaPhoto, Message
@@ -28,44 +23,37 @@ from AarohiX.utils.inline import (
 from AarohiX.utils.logger import play_logs
 from AarohiX.utils.stream.stream import stream
 from config import BANNED_USERS, lyrical
+from pyrogram.errors import UserNotParticipant, ChatAdminRequired
 from config import Muntazer
-from pyrogram import types
-from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
-from pyrogram import Client
-
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 async def must_join_channel(app, msg):
-    # التأكد من الاشتراك في القناة المطلوبة
     if not Muntazer:
         return
-    
     try:
-        # التحقق من نوع المحادثة: هل هي مجموعة أم لا؟
-        if isinstance(msg.chat, types.Chat) and msg.chat.type == "group":
+        try:
+            await app.get_chat_member(Muntazer, msg.from_user.id)
+        except UserNotParticipant:
+            if Muntazer.isalpha():
+                link = "https://t.me/" + Muntazer
+            else:
+                chat_info = await app.get_chat(Muntazer)
+                link = chat_info.invite_link
             try:
-                await app.get_chat_member(Muntazer, msg.from_user.id)
-            except UserNotParticipant:
-                # إذا لم يكن المستخدم مشتركًا في القناة، أرسل رسالة تطلب الاشتراك
-                if Muntazer.isalpha():
-                    link = "https://t.me/" + Muntazer
-                else:
-                    chat_info = await app.get_chat(Muntazer)
-                    link = chat_info.invite_link
-                try:
-                    await msg.reply(
-                        f"~︙عليك الأشتراك في قناة البوت \n~︙قناة البوت : @{Muntazer}.",
-                        disable_web_page_preview=True,
-                        reply_markup=InlineKeyboardMarkup([
-                            [InlineKeyboardButton("< 𝗆𝗎𝗌𝗂𝖼 𝗌𝖾𝗇 >", url=link)]
-                        ])
-                    )
-                    await msg.stop_propagation()
-                except ChatWriteForbidden:
-                    pass
+                await msg.reply(
+                    f"~︙عليك الأشتراك في قناة البوت \n~︙قناة البوت : @{Muntazer}.",
+                    disable_web_page_preview=True,
+                    reply_markup=InlineKeyboardMarkup([
+                        [InlineKeyboardButton("< Source >", url=link)]
+                    ])
+                )
+                await msg.stop_propagation()
+            except ChatWriteForbidden:
+                pass
     except ChatAdminRequired:
         print(f"I m not admin in the MUST_JOIN chat {Muntazer}!")
 
-# دالة التشغيل المخصصة
+# استخدام دالة must_join_channel في دالة التشغيل المخصصة
 @app.on_message(
     command(
         [
@@ -93,20 +81,12 @@ async def play_commnd(
     url,
     fplay,
 ):
-    # التحقق من نوع المحادثة: هل هي مجموعة أم لا؟
-    if message.chat.type == "group":
-        # إذا كانت المحادثة في مجموعة، قم بالتحقق من اشتراك المستخدم في القناة المطلوبة
-        await must_join_channel(client, message)
-        
-        # رسالة الاستجابة للمستخدم أثناء عملية التشغيل
-        mystic = await message.reply_text(
-            _["play_2"].format(channel) if channel else _["play_1"]
-        )
-    else:
-        # إذا لم تكن المحادثة في مجموعة، فلا يوجد حاجة لرسالة التحقق
-        mystic = None
+    # التحقق من اشتراك المستخدم في القناة المطلوبة
+    await must_join_channel(client, message)
     
-    # تعريف المتغيرات الأخرى المستخدمة في الدالة
+    mystic = await message.reply_text(
+        _["play_2"].format(channel) if channel else _["play_1"]
+    )
     plist_id = None
     slider = None
     plist_type = None
@@ -155,54 +135,11 @@ async def play_commnd(
                     streamtype="telegram",
                     forceplay=fplay,
                 )
-        
             except Exception as e:
-                ex_type = type(e).__name__
+                ex_type = type(e).name
                 err = e if ex_type == "AssistantErr" else _["general_2"].format(ex_type)
-                return await mystic.edit_text(err)            
-        return
-    elif video_telegram:
-        if message.reply_to_message.document:
-            try:
-                ext = video_telegram.file_name.split(".")[-1]
-                if ext.lower() not in formats:
-                    return await mystic.edit_text(
-                        _["play_7"].format(f"{' | '.join(formats)}")
-                    )
-            except:
-                return await mystic.edit_text(
-                    _["play_7"].format(f"{' | '.join(formats)}")
-                )
-        if video_telegram.file_size > config.TG_VIDEO_FILESIZE_LIMIT:
-            return await mystic.edit_text(_["play_8"])
-        file_path = await Telegram.get_filepath(video=video_telegram)
-        if await Telegram.download(_, message, mystic, file_path):
-            message_link = await Telegram.get_link(message)
-            file_name = await Telegram.get_filename(video_telegram)
-            dur = await Telegram.get_duration(video_telegram, file_path)
-            details = {
-                "title": file_name,
-                "link": message_link,
-                "path": file_path,
-                "dur": dur,
-            }
-            try:
-                await stream(
-                    _,
-                    mystic,
-                    user_id,
-                    details,
-                    chat_id,
-                    user_name,
-                    message.chat.id,
-                    video=True,
-                    streamtype="telegram",
-                    forceplay=fplay,
-                )
-            except Exception as e:
-                ex_type = type(e).__name__
-                err = e if ex_type == "AssistantErr" else _["general_2"].format(ex_type)
-                return await mystic.edit_text(err)            
+                return await mystic.edit_text(err)
+            return await mystic.delete()
         return
     elif url:
         if await YouTube.exists(url):
@@ -430,6 +367,7 @@ async def play_commnd(
             ex_type = type(e).__name__
             err = e if ex_type == "AssistantErr" else _["general_2"].format(ex_type)
             return await mystic.edit_text(err)
+        await mystic.delete()
         return await play_logs(message, streamtype=streamtype)
     else:
         if plist_type:
