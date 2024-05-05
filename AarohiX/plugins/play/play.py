@@ -33,14 +33,19 @@ from pyrogram import types
 from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram import Client
 
+
 async def must_join_channel(app, msg):
+    # التأكد من الاشتراك في القناة المطلوبة
     if not Muntazer:
         return
+    
     try:
+        # التحقق من نوع المحادثة: هل هي مجموعة أم لا؟
         if isinstance(msg.chat, types.Chat) and msg.chat.type == "group":
             try:
                 await app.get_chat_member(Muntazer, msg.from_user.id)
             except UserNotParticipant:
+                # إذا لم يكن المستخدم مشتركًا في القناة، أرسل رسالة تطلب الاشتراك
                 if Muntazer.isalpha():
                     link = "https://t.me/" + Muntazer
                 else:
@@ -60,7 +65,7 @@ async def must_join_channel(app, msg):
     except ChatAdminRequired:
         print(f"I m not admin in the MUST_JOIN chat {Muntazer}!")
 
-# استخدام دالة must_join_channel في دالة التشغيل المخصصة
+# دالة التشغيل المخصصة
 @app.on_message(
     command(
         [
@@ -88,15 +93,17 @@ async def play_commnd(
     url,
     fplay,
 ):
-    # التحقق من نوع المحادثة
+    # التحقق من نوع المحادثة: هل هي مجموعة أم لا؟
     if message.chat.type == "group":
+        # إذا كانت المحادثة في مجموعة، قم بالتحقق من اشتراك المستخدم في القناة المطلوبة
         await must_join_channel(client, message)
-    else:
-        pass
-    
+
+    # رسالة الاستجابة للمستخدم أثناء عملية التشغيل
     mystic = await message.reply_text(
         _["play_2"].format(channel) if channel else _["play_1"]
     )
+    
+    # تعريف المتغيرات الأخرى المستخدمة في الدالة
     plist_id = None
     slider = None
     plist_type = None
@@ -145,61 +152,7 @@ async def play_commnd(
                     streamtype="telegram",
                     forceplay=fplay,
                 )
-    # تحقق من الاشتراك في المجموعة
-    if message.chat.type == "group":
-        await must_join_channel(client, message)
-    
-    mystic = await message.reply_text(
-        _["play_2"].format(channel) if channel else _["play_1"]
-    )
-    plist_id = None
-    slider = None
-    plist_type = None
-    spotify = None
-    user_id = message.from_user.id if message.from_user else "1121532100"
-    user_name = message.from_user.first_name if message.from_user else None
-    audio_telegram = (
-        (message.reply_to_message.audio or message.reply_to_message.voice)
-        if message.reply_to_message
-        else None
-    )
-    video_telegram = (
-        (message.reply_to_message.video or message.reply_to_message.document)
-        if message.reply_to_message
-        else None
-    )
-    if audio_telegram:
-        if audio_telegram.file_size > 30004857600:
-            return await mystic.edit_text(_["play_5"])
-        duration_min = seconds_to_min(audio_telegram.duration)
-        if (audio_telegram.duration) > config.DURATION_LIMIT:
-            return await mystic.edit_text(
-                _["play_6"].format(config.DURATION_LIMIT_MIN, app.mention)
-            )
-        file_path = await Telegram.get_filepath(audio=audio_telegram)
-        if await Telegram.download(_, message, mystic, file_path):
-            message_link = await Telegram.get_link(message)
-            file_name = await Telegram.get_filename(audio_telegram, audio=True)
-            dur = await Telegram.get_duration(audio_telegram, file_path)
-            details = {
-                "title": file_name,
-                "link": message_link,
-                "path": file_path,
-                "dur": dur,
-            }
-
-            try:
-                await stream(
-                    _,
-                    mystic,
-                    user_id,
-                    details,
-                    chat_id,
-                    user_name,
-                    message.chat.id,
-                    streamtype="telegram",
-                    forceplay=fplay,
-                )
+        
             except Exception as e:
                 ex_type = type(e).__name__
                 err = e if ex_type == "AssistantErr" else _["general_2"].format(ex_type)
