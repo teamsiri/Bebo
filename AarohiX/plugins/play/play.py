@@ -89,7 +89,7 @@ async def play_commnd(
     fplay,
 ):
     # تحقق من الاشتراك في المجموعة
-    if isinstance(message.chat, types.Chat) and message.chat.type == "group":
+    if message.chat.type == "group":
         await must_join_channel(client, message)
     
     mystic = await message.reply_text(
