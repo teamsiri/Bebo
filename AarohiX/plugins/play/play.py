@@ -4,6 +4,7 @@ from pyrogram import filters
 from pyrogram.types import InlineKeyboardMarkup, InputMediaPhoto, Message
 import random
 import string
+from pyrogram import types
 from strings.filters import command
 from pyrogram import filters
 from pyrogram.types import InlineKeyboardMarkup, InputMediaPhoto, Message
