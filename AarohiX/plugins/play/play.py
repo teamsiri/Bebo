@@ -29,48 +29,39 @@ from AarohiX.utils.stream.stream import stream
 from config import BANNED_USERS, lyrical
 from config import Muntazer
 
-force_btn = InlineKeyboardMarkup(
-
-    [
-
-        [
-
-            InlineKeyboardButton(
-
-                text="Link .", url=f"{Muntazer}"
-
-            ),                        
-
-        ],        
-
-    ]
-
-)
-
-
-
-async def must_join_channel(message):    
-
+async def must_join_channel(app, msg):
+    if not Muntazer:
+        return
     try:
+        if isinstance(msg.chat, types.Group):
+            try:
+                await app.get_chat_member(Muntazer, msg.from_user.id)
+            except UserNotParticipant:
+                if Muntazer.isalpha():
+                    link = "https://t.me/" + Muntazer
+                else:
+                    chat_info = await app.get_chat(Muntazer)
+                    link = chat_info.invite_link
+                try:
+                    await msg.reply(
+                        f"~︙عليك الأشتراك في قناة البوت \n~︙قناة البوت : @{Muntazer}.",
+                        disable_web_page_preview=True,
+                        reply_markup=InlineKeyboardMarkup([
+                            [InlineKeyboardButton("< 𝗆𝗎𝗌𝗂𝖼 𝗌𝖾𝗇 >", url=link)]
+                        ])
+                    )
+                    await msg.stop_propagation()
+                except ChatWriteForbidden:
+                    pass
+    except ChatAdminRequired:
+        print(f"I m not admin in the MUST_JOIN chat {Muntazer}!")
 
-        userid = message.from_user.id
-
-        status = await app.get_chat_member(f"{Muntazer}", userid)
-
-        return True
-
-    except Exception:
-
-        await message.reply_text( "**↝: عذرا . عليك لاشتراك في قناة البوت أولاً .**" ,reply_markup=force_btn,parse_mode="markdown",disable_web_page_preview=False)
-
-        return False
-
-
+# استخدام دالة must_join_channel في دالة التشغيل المخصصة
 @app.on_message(
     command(
         [
-            "شغل",
             "تشغيل",
+            "شغل",
             "cplay",
             "cvplay",
             "playforce",
@@ -93,6 +84,10 @@ async def play_commnd(
     url,
     fplay,
 ):
+    # تجاهل رسالة الاشتراك في حالة القناة
+    if isinstance(message.chat, types.Channel):
+        return
+    
     mystic = await message.reply_text(
         _["play_2"].format(channel) if channel else _["play_1"]
     )
