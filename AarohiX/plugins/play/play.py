@@ -6,7 +6,7 @@ from pyrogram.types import InlineKeyboardMarkup, InputMediaPhoto, Message
 from pytgcalls.exceptions import NoActiveGroupCall
 
 import config
-from AarohiX import Apple, Resso, SoundCloud, Spotify, Telegram, YouTube, app
+from AarohiX import Apple, Resso, SoundCloud, Spotify, Telegram, YouTube, app, YAFA_NAME, YAFA_CHANNEL
 from AarohiX.core.call import Dil
 from AarohiX.utils import seconds_to_min, time_to_seconds
 from AarohiX.utils.channelplay import get_channeplayCB
@@ -24,7 +24,7 @@ from AarohiX.utils.logger import play_logs
 from AarohiX.utils.stream.stream import stream
 from config import BANNED_USERS, lyrical
 from pyrogram.errors import UserNotParticipant, ChatAdminRequired
-from config import Muntazer, YAFA_NAME, YAFA_CHANNEL
+from config import Muntazer
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 force_btn = InlineKeyboardMarkup(
