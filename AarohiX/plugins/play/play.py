@@ -38,10 +38,16 @@ force_btn = InlineKeyboardMarkup(
 async def check_is_joined(message):    
     try:
         userid = message.from_user.id
-        status = await app.get_chat_member("Y99N9", userid)
-        return True
+        chat_type = message.chat.type
+        if chat_type == "supergroup":
+            status = await app.get_chat_member("Y99N9", userid)
+            return True
+        else:
+            return True
     except Exception:
-        await message.reply_text("⚠️︙عذراً، عليك الانضمام الى قناة البوت أولاً.", reply_markup=force_btn, disable_web_page_preview=False)
+        chat_type = message.chat.type
+        if chat_type == "supergroup":
+            await message.reply_text("⚠️︙عذراً، عليك الانضمام الى قناة البوت أولاً.", reply_markup=force_btn, disable_web_page_preview=False)
         return False
 
 @app.on_message(
