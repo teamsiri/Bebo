@@ -11,11 +11,15 @@ API_ID = int(getenv("API_ID", ""))
 
 API_HASH = getenv("API_HASH", "")
 
+YAFA_CHANNEL = getenv("YAFA_CHANNEL", "https://t.me/Y99N9"
+    
+YAFA_NAME = getenv("YAFA_NAME", "- Link ."
+
 BOT_TOKEN = getenv("BOT_TOKEN", "")
 
 MUSIC_BOT_NAME = getenv("MUSIC_BOT_NAME", "bot")
 
-Muntazer = getenv("muntazer", "Y_YY5Y")
+Muntazer = getenv("muntazer", "Y99N9")
 
 MONGO_DB_URI = getenv("MONGO_DB_URI", "")
 
