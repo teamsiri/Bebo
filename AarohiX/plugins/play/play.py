@@ -6,7 +6,7 @@ from pyrogram.types import InlineKeyboardMarkup, InputMediaPhoto, Message
 from pytgcalls.exceptions import NoActiveGroupCall
 
 import config
-from AarohiX import Apple, Resso, SoundCloud, Spotify, Telegram, YouTube, app, YAFA_NAME, YAFA_CHANNEL
+from AarohiX import Apple, Resso, SoundCloud, Spotify, Telegram, YouTube, app
 from AarohiX.core.call import Dil
 from AarohiX.utils import seconds_to_min, time_to_seconds
 from AarohiX.utils.channelplay import get_channeplayCB
@@ -31,7 +31,7 @@ force_btn = InlineKeyboardMarkup(
     [
         [
             InlineKeyboardButton(   
-              text=f"{YAFA_NAME}", url=f"{YAFA_CHANNEL}",)                        
+              text=f"{Muntazer}", url=f"{Muntazer}",)                        
         ],        
     ]
 )
