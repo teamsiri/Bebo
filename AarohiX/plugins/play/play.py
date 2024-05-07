@@ -48,6 +48,8 @@ async def check_is_joined(message):
         chat_type = message.chat.type
         if chat_type == "supergroup":
             await message.reply_text("⚠️︙عذراً، عليك الانضمام الى قناة البوت أولاً.", reply_markup=force_btn, disable_web_page_preview=False)
+        else:
+            pass  # تخطي رسالة الاشتراك في حالة القناة
         return False
 
 @app.on_message(
