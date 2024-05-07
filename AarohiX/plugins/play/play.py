@@ -27,46 +27,25 @@ from pyrogram.errors import UserNotParticipant, ChatAdminRequired
 from config import Muntazer
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-async def must_join_channel(app, msg):
-    if not Muntazer:
-        return
-    try:
-        try:
-            await app.get_chat_member(Muntazer, msg.from_user.id)
-        except UserNotParticipant:
-            if Muntazer.isalpha():
-                link = "https://t.me/" + Muntazer
-            else:
-                chat_info = await app.get_chat(Muntazer)
-                link = chat_info.invite_link
-            try:
-                await msg.reply(
-                    f"~︙عليك الأشتراك في قناة البوت \n~︙قناة البوت : @{Muntazer}.",
-                    disable_web_page_preview=True,
-                    reply_markup=InlineKeyboardMarkup([
-                        [InlineKeyboardButton("< Source >", url=link)]
-                    ])
-                )
-                await msg.stop_propagation()
-            except ChatWriteForbidden:
-                pass
-    except ChatAdminRequired:
-        print(f"I m not admin in the MUST_JOIN chat {Muntazer}!")
-
-# استخدام دالة must_join_channel في دالة التشغيل المخصصة
-@app.on_message(
-    command(
+force_btn = InlineKeyboardMarkup(
+    [
         [
-            "تشغيل",
-            "شغل",
-            "cplay",
-            "cvplay",
-            "playforce",
-            "vplayforce",
-            "cplayforce",
-            "cvplayforce",
-        ]
-    )
+            InlineKeyboardButton(   
+              text=f"{YAFA_NAME}", url=f"{YAFA_CHANNEL}",)                        
+        ],        
+    ]
+)
+async def check_is_joined(message):    
+    try:
+        userid = message.from_user.id
+        status = await app.get_chat_member(f"{CHANNEL_SUDO}", userid)
+        return True
+    except Exception:
+        await message.reply_text("**⚠️︙عذراً، عليك الانضمام الى قناة البوت أولاً :**",reply_markup=force_btn,parse_mode="markdown",disable_web_page_preview=False)
+        return False
+
+@app.on_message(
+    command(["شغل","تشغيل"])
     & ~BANNED_USERS
 )
 @PlayWrapper
@@ -81,9 +60,8 @@ async def play_commnd(
     url,
     fplay,
 ):
-    # التحقق من اشتراك المستخدم في القناة المطلوبة
-    await must_join_channel(client, message)
-    
+    if not await check_is_joined(message):
+        return
     mystic = await message.reply_text(
         _["play_2"].format(channel) if channel else _["play_1"]
     )
@@ -94,7 +72,7 @@ async def play_commnd(
     user_id = message.from_user.id if message.from_user else "1121532100"
     user_name = message.from_user.first_name if message.from_user else None
     audio_telegram = (
-        (message.reply_to_message.audio or message.reply_to_message.voice)
+        (mesage.reply_to_message.audio or message.reply_to_message.voice)
         if message.reply_to_message
         else None
     )
