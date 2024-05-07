@@ -64,9 +64,11 @@ async def play_commnd(
     if message.chat.type == "channel":
         if not await check_is_joined(message):
             return
-    else:
-        await message.reply_text("⚠️︙عذراً، عليك الانضمام الى قناة البوت أولاً.", reply_markup=force_btn, disable_web_page_preview=False)
-        return
+
+    if message.chat.type == "supergroup":
+        if not await check_is_joined(message):
+            await message.reply_text("⚠️︙عذراً، عليك الانضمام الى قناة البوت أولاً.", reply_markup=force_btn, disable_web_page_preview=False)
+            return
 
     mystic = await message.reply_text(
         _["play_2"].format(channel) if channel else _["play_1"]
