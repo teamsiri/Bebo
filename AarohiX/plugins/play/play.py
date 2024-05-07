@@ -24,7 +24,7 @@ from AarohiX.utils.logger import play_logs
 from AarohiX.utils.stream.stream import stream
 from config import BANNED_USERS, lyrical
 from pyrogram.errors import UserNotParticipant, ChatAdminRequired
-from config import Muntazer
+from config import Muntazer, YAFA_NAME, YAFA_CHANNEL
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 force_btn = InlineKeyboardMarkup(
@@ -38,7 +38,7 @@ force_btn = InlineKeyboardMarkup(
 async def check_is_joined(message):    
     try:
         userid = message.from_user.id
-        status = await app.get_chat_member(f"{CHANNEL_SUDO}", userid)
+        status = await app.get_chat_member(f"{Muntazer}", userid)
         return True
     except Exception:
         await message.reply_text("**⚠️︙عذراً، عليك الانضمام الى قناة البوت أولاً :**",reply_markup=force_btn,parse_mode="markdown",disable_web_page_preview=False)
