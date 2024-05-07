@@ -41,7 +41,7 @@ async def check_is_joined(message):
         status = await app.get_chat_member(f"{Muntazer}", userid)
         return True
     except Exception:
-        await message.reply_text("**⚠️︙عذراً، عليك الانضمام الى قناة البوت أولاً :**", reply_markup=force_btn, parse_mode="Markdown", disable_web_page_preview=False)
+        await message.reply_text("⚠️︙عذراً، عليك الانضمام الى قناة البوت أولاً.", reply_markup=force_btn, disable_web_page_preview=False)
         return False
 
 @app.on_message(
@@ -72,7 +72,7 @@ async def play_commnd(
     user_id = message.from_user.id if message.from_user else "1121532100"
     user_name = message.from_user.first_name if message.from_user else None
     audio_telegram = (
-        (mesage.reply_to_message.audio or message.reply_to_message.voice)
+        (message.reply_to_message.audio or message.reply_to_message.voice)
         if message.reply_to_message
         else None
     )
