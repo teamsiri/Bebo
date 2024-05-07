@@ -35,21 +35,14 @@ force_btn = InlineKeyboardMarkup(
         ],        
     ]
 )
+
 async def check_is_joined(message):    
     try:
-        userid = message.from_user.id
-        chat_type = message.chat.type
-        if chat_type == "supergroup" or chat_type == "group":
+        if message.chat.type == "channel":
+            userid = message.from_user.id
             status = await app.get_chat_member("Y99N9", userid)
-            return True
-        else:
-            return True
+        return True
     except Exception:
-        chat_type = message.chat.type
-        if chat_type == "supergroup" or chat_type == "group":
-            await message.reply_text("⚠️︙عذراً، عليك الانضمام الى قناة البوت أولاً.", reply_markup=force_btn, disable_web_page_preview=False)
-        else:
-            pass  # تخطي رسالة الاشتراك في حالة القناة
         return False
 
 @app.on_message(
@@ -68,8 +61,14 @@ async def play_commnd(
     url,
     fplay,
 ):
-    if not await check_is_joined(message):
-        return
+    if message.chat.type == "channel":
+        if not await check_is_joined(message):
+            return
+    else:
+        if not await check_is_joined(message):
+            await message.reply_text("⚠️︙عذراً، عليك الانضمام الى قناة البوت أولاً.", reply_markup=force_btn, disable_web_page_preview=False)
+            return
+
     mystic = await message.reply_text(
         _["play_2"].format(channel) if channel else _["play_1"]
     )
