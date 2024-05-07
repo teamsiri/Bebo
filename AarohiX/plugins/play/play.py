@@ -31,14 +31,14 @@ force_btn = InlineKeyboardMarkup(
     [
         [
             InlineKeyboardButton(   
-              text=f"{Muntazer}", url=f"{Muntazer}",)                        
+              text="قناة البوت", url="https://t.me/Y99N9",)                        
         ],        
     ]
 )
 async def check_is_joined(message):    
     try:
         userid = message.from_user.id
-        status = await app.get_chat_member(f"{Muntazer}", userid)
+        status = await app.get_chat_member("Y99N9", userid)
         return True
     except Exception:
         await message.reply_text("⚠️︙عذراً، عليك الانضمام الى قناة البوت أولاً.", reply_markup=force_btn, disable_web_page_preview=False)
@@ -73,6 +73,11 @@ async def play_commnd(
     user_name = message.from_user.first_name if message.from_user else None
     audio_telegram = (
         (message.reply_to_message.audio or message.reply_to_message.voice)
+        if message.reply_to_message
+        else None
+    )
+    video_telegram = (
+        (message.reply_to_message.video or message.reply_to_message.document)
         if message.reply_to_message
         else None
     )
