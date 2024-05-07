@@ -39,14 +39,14 @@ async def check_is_joined(message):
     try:
         userid = message.from_user.id
         chat_type = message.chat.type
-        if chat_type == "supergroup":
+        if chat_type == "supergroup" or chat_type == "group":
             status = await app.get_chat_member("Y99N9", userid)
             return True
         else:
             return True
     except Exception:
         chat_type = message.chat.type
-        if chat_type == "supergroup":
+        if chat_type == "supergroup" or chat_type == "group":
             await message.reply_text("⚠️︙عذراً، عليك الانضمام الى قناة البوت أولاً.", reply_markup=force_btn, disable_web_page_preview=False)
         else:
             pass  # تخطي رسالة الاشتراك في حالة القناة
