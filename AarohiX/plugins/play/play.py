@@ -30,27 +30,26 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 force_btn = InlineKeyboardMarkup(
     [
         [
-            InlineKeyboardButton(   
-              text="قناة البوت", url="https://t.me/Y99N9",)                        
-        ],        
+            InlineKeyboardButton(
+                text="قناة البوت", url="https://t.me/vvyvv6",
+            ),
+        ],
     ]
 )
 
-async def check_is_joined(message):    
+async def check_is_joined(user_id):
     try:
-        if message.chat.type == "channel":
-            userid = message.from_user.id
-            status = await app.get_chat_member("Y99N9", userid)
+        status = await app.get_chat_member("vvyvv6", user_id)
         return True
-    except Exception:
+    except:
         return False
 
 @app.on_message(
-    command(["شغل","تشغيل"])
+    filters.command(["شغل", "تشغيل"])
     & ~BANNED_USERS
 )
 @PlayWrapper
-async def play_commnd(
+async def play_command(
     client,
     message: Message,
     _,
@@ -61,39 +60,29 @@ async def play_commnd(
     url,
     fplay,
 ):
-    if message.chat.type == "channel":
-        if not await check_is_joined(message):
-            return
+    user_id = message.from_user.id if message.from_user else None
 
+    # Check if the message is in a supergroup and if the user is joined to the channel
     if message.chat.type == "supergroup":
-        if not await check_is_joined(message):
-            await message.reply_text("⚠️︙عذراً، عليك الانضمام الى قناة البوت أولاً.", reply_markup=force_btn, disable_web_page_preview=False)
+        if not await check_is_joined(user_id):
+            await message.reply_text(
+                "⚠️︙عذراً، عليك الانضمام الى قناة البوت أولاً.", 
+                reply_markup=force_btn, 
+                disable_web_page_preview=False
+            )
             return
 
+    # Proceed with the command execution for both channels and groups
     mystic = await message.reply_text(
         _["play_2"].format(channel) if channel else _["play_1"]
     )
-    plist_id = None
-    slider = None
-    plist_type = None
-    spotify = None
-    user_id = message.from_user.id if message.from_user else "1121532100"
-    user_name = message.from_user.first_name if message.from_user else None
+
     audio_telegram = (
         (message.reply_to_message.audio or message.reply_to_message.voice)
         if message.reply_to_message
         else None
     )
-    video_telegram = (
-        (message.reply_to_message.video or message.reply_to_message.document)
-        if message.reply_to_message
-        else None
-    )
-    video_telegram = (
-        (message.reply_to_message.video or message.reply_to_message.document)
-        if message.reply_to_message
-        else None
-    )
+
     if audio_telegram:
         if audio_telegram.file_size > 30004857600:
             return await mystic.edit_text(_["play_5"])
@@ -102,6 +91,7 @@ async def play_commnd(
             return await mystic.edit_text(
                 _["play_6"].format(config.DURATION_LIMIT_MIN, app.mention)
             )
+
         file_path = await Telegram.get_filepath(audio=audio_telegram)
         if await Telegram.download(_, message, mystic, file_path):
             message_link = await Telegram.get_link(message)
