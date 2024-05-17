@@ -89,6 +89,11 @@ async def play_commnd(
         if message.reply_to_message
         else None
     )
+    video_telegram = (
+        (message.reply_to_message.video or message.reply_to_message.document)
+        if message.reply_to_message
+        else None
+    )
     if audio_telegram:
         if audio_telegram.file_size > 30004857600:
             return await mystic.edit_text(_["play_5"])
