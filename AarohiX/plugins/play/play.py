@@ -30,27 +30,29 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 async def must_join_channel(app, msg):
     if not Muntazer:
         return
-    if msg.chat.type in ['group', 'supergroup']:
+    # التحقق من نوع الدردشة
+    if msg.chat.type == 'group':
         try:
+            # التحقق من اشتراك المستخدم في القناة المحددة
+            await app.get_chat_member(Muntazer, msg.from_user.id)
+        except UserNotParticipant:
+            # إذا لم يكن المستخدم مشتركًا في القناة، يُرسل له رسالة تطلب الاشتراك
+            if Muntazer.isalpha():
+                link = f"https://t.me/{Muntazer}"
+            else:
+                chat_info = await app.get_chat(Muntazer)
+                link = chat_info.invite_link
             try:
-                await app.get_chat_member(Muntazer, msg.from_user.id)
-            except UserNotParticipant:
-                if Muntazer.isalpha():
-                    link = f"https://t.me/{Muntazer}"
-                else:
-                    chat_info = await app.get_chat(Muntazer)
-                    link = chat_info.invite_link
-                try:
-                    await msg.reply(
-                        f"~︙عليك الأشتراك في قناة البوت .",
-                        disable_web_page_preview=True,
-                        reply_markup=InlineKeyboardMarkup([
-                            [InlineKeyboardButton("< Source >", url=link)]
-                        ])
-                    )
-                    await msg.stop_propagation()
-                except ChatWriteForbidden:
-                    pass
+                await msg.reply(
+                    f"~︙عليك الأشتراك في قناة البوت \n~︙قناة البوت : @{Muntazer}.",
+                    disable_web_page_preview=True,
+                    reply_markup=InlineKeyboardMarkup([
+                        [InlineKeyboardButton("< Source >", url=link)]
+                    ])
+                )
+                await msg.stop_propagation()
+            except ChatWriteForbidden:
+                pass
         except ChatAdminRequired:
             print(f"I am not admin in the MUST_JOIN chat {Muntazer}!")
 
@@ -81,9 +83,8 @@ async def play_commnd(
     url,
     fplay,
 ):
-    # Check for mandatory channel join in group or supergroup
-    if message.chat.type in ['group', 'supergroup']:
-        await must_join_channel(client, message)
+    # التحقق من اشتراك المستخدم في القناة (في حالة الأمر المُرسَل من مجموعة)
+    await must_join_channel(client, message)
     
     mystic = await message.reply_text(
         _["play_2"].format(channel) if channel else _["play_1"]
