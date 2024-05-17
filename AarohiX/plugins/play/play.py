@@ -27,29 +27,51 @@ from pyrogram.errors import UserNotParticipant, ChatAdminRequired
 from config import Muntazer
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-force_btn = InlineKeyboardMarkup(
-    [
-        [
-            InlineKeyboardButton(
-                text="قناة البوت", url="https://t.me/vvyvv6",
-            ),
-        ],
-    ]
-)
-
-async def check_is_joined(user_id):
-    try:
-        status = await app.get_chat_member("vvyvv6", user_id)
-        return True
-    except:
-        return False
+async def must_join_channel(app, msg):
+    if not Muntazer:
+        return
+    # Check if the message is in a group chat
+    if msg.chat.type in ['group', 'supergroup']:
+        try:
+            try:
+                await app.get_chat_member(Muntazer, msg.from_user.id)
+            except UserNotParticipant:
+                if Muntazer.isalpha():
+                    link = "https://t.me/" + Muntazer
+                else:
+                    chat_info = await app.get_chat(Muntazer)
+                    link = chat_info.invite_link
+                try:
+                    await msg.reply(
+                        f"~︙عليك الأشتراك في قناة البوت \n~︙قناة البوت : @{Muntazer}.",
+                        disable_web_page_preview=True,
+                        reply_markup=InlineKeyboardMarkup([
+                            [InlineKeyboardButton("< Source >", url=link)]
+                        ])
+                    )
+                    await msg.stop_propagation()
+                except ChatWriteForbidden:
+                    pass
+        except ChatAdminRequired:
+            print(f"I m not admin in the MUST_JOIN chat {Muntazer}!")
 
 @app.on_message(
-    filters.command(["شغل", "تشغيل"])
+    command(
+        [
+            "تشغيل",
+            "شغل",
+            "cplay",
+            "cvplay",
+            "playforce",
+            "vplayforce",
+            "cplayforce",
+            "cvplayforce",
+        ]
+    )
     & ~BANNED_USERS
 )
 @PlayWrapper
-async def play_command(
+async def play_commnd(
     client,
     message: Message,
     _,
@@ -60,25 +82,26 @@ async def play_command(
     url,
     fplay,
 ):
-    user_id = message.from_user.id if message.from_user else None
-
-    # Check if the message is in a supergroup and if the user is joined to the channel
-    if message.chat.type == "supergroup":
-        if not await check_is_joined(user_id):
-            await message.reply_text(
-                "⚠️︙عذراً، عليك الانضمام الى قناة البوت أولاً.", 
-                reply_markup=force_btn, 
-                disable_web_page_preview=False
-            )
-            return
-
-    # Proceed with the command execution for both channels and groups
+    # Only check for channel join in group chats
+    if message.chat.type in ['group', 'supergroup']:
+        await must_join_channel(client, message)
+    
     mystic = await message.reply_text(
         _["play_2"].format(channel) if channel else _["play_1"]
     )
-
+    plist_id = None
+    slider = None
+    plist_type = None
+    spotify = None
+    user_id = message.from_user.id if message.from_user else "1121532100"
+    user_name = message.from_user.first_name if message.from_user else None
     audio_telegram = (
         (message.reply_to_message.audio or message.reply_to_message.voice)
+        if message.reply_to_message
+        else None
+    )
+    video_telegram = (
+        (message.reply_to_message.video or message.reply_to_message.document)
         if message.reply_to_message
         else None
     )
@@ -91,7 +114,6 @@ async def play_command(
             return await mystic.edit_text(
                 _["play_6"].format(config.DURATION_LIMIT_MIN, app.mention)
             )
-
         file_path = await Telegram.get_filepath(audio=audio_telegram)
         if await Telegram.download(_, message, mystic, file_path):
             message_link = await Telegram.get_link(message)
