@@ -22,6 +22,9 @@ async def must_join_channel(cli, msg: Message):
     if not Muntazer: 
         return 
     try: 
+        if msg.from_user is None:
+            return
+        
         try: 
             await cli.get_chat_member(Muntazer, msg.from_user.id) 
         except UserNotParticipant: 
@@ -53,6 +56,9 @@ async def skip(cli, message: Message, _, chat_id):
     if not Muntazer: 
         return 
     try: 
+        if message.from_user is None:
+            return
+        
         await cli.get_chat_member(Muntazer, message.from_user.id) 
     except UserNotParticipant: 
         if Muntazer.isalpha(): 
