@@ -48,28 +48,29 @@ async def must_join_channel(app, msg):
 
  
  
-@app.on_message( 
-    command(["سكب", "التالي", "تخطي", "cnext"]) & ~BANNED_USERS 
-) 
-@AdminRightsCheck 
-async def skip(cli, message: Message, _, chat_id): 
-if not Muntazer: 
-        return 
+@app.on_message(
+    command(["سكب", "التالي", "تخطي", "cnext"]) 
+)
+async def skip(cli, message: Message):
+    chat_id = message.chat.id  # تعيين قيمة chat_id بناءً على message.chat.id
+    
+    if not Muntazer:
+        return
     try:
-        await cli.get_chat_member(Muntazer, message.from_user.id) 
-    except UserNotParticipant: 
-        if Muntazer.isalpha(): 
-            link = "https://t.me/" + Muntazer 
-        else: 
-            chat_info = await cli.get_chat(Muntazer) 
-            link = chat_info.invite_link 
-        await message.reply( 
-            f"~︙عزيزي {message.from_user.mention} \n~︙عليك الأشتراك في قناة البوت \n~︙قناة البوت : @{Muntazer}.", 
-            disable_web_page_preview=True, 
-            reply_markup=InlineKeyboardMarkup([ 
-                [InlineKeyboardButton("< Link >", url=link)] 
-            ]) 
-        ) 
+        await cli.get_chat_member(Muntazer, message.from_user.id)
+    except UserNotParticipant:
+        if Muntazer.isalpha():
+            link = "https://t.me/" + Muntazer
+        else:
+            chat_info = await cli.get_chat(Muntazer)
+            link = chat_info.invite_link
+        await message.reply(
+            f"~︙عزيزي {message.from_user.mention} \n~︙عليك الأشتراك في قناة البوت \n~︙قناة البوت : @{Muntazer}.",
+            disable_web_page_preview=True,
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton("< Source Plus >", url=link)]
+            ])
+        )
         return 
  
     if not len(message.command) < 2: 
