@@ -53,12 +53,9 @@ async def must_join_channel(app, msg):
 ) 
 @AdminRightsCheck 
 async def skip(cli, message: Message, _, chat_id): 
-    if not Muntazer:
-        return
+if not Muntazer: 
+        return 
     try:
-        if msg.from_user is None:
-            return
-        try:
         await cli.get_chat_member(Muntazer, message.from_user.id) 
     except UserNotParticipant: 
         if Muntazer.isalpha(): 
