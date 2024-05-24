@@ -18,31 +18,34 @@ from AarohiX.utils.thumbnails import get_thumb
 from config import Muntazer
 
 @app.on_message(filters.incoming & filters.private, group=-1) 
-async def must_join_channel(cli, msg: Message): 
-    if not Muntazer: 
-        return 
-    try: 
-        try: 
-            await cli.get_chat_member(Muntazer, msg.from_user.id) 
-        except UserNotParticipant: 
-            if Muntazer.isalpha(): 
-                link = "https://t.me/" + Muntazer 
-            else: 
-                chat_info = await cli.get_chat(Muntazer) 
-                link = chat_info.invite_link 
-            try: 
-                await msg.reply( 
-                    f"~︙عليك الأشتراك في قناة البوت \n~︙قناة البوت : @{Muntazer}.", 
-                    disable_web_page_preview=True, 
-                    reply_markup=InlineKeyboardMarkup([ 
-                        [InlineKeyboardButton("< Source >", url=link)] 
-                    ]) 
-                ) 
-                await msg.stop_propagation() 
-            except ChatWriteForbidden: 
-                pass 
-    except ChatAdminRequired: 
-        print(f"I'm not admin in the MUST_JOIN chat {Muntazer}!") 
+async def must_join_channel(app, msg):
+    if not Muntazer:
+        return
+    try:
+        if msg.from_user is None:
+            return
+        try:
+            await app.get_chat_member(Muntazer, msg.from_user.id)
+        except UserNotParticipant:
+            if Muntazer.isalpha():
+                link = "https://t.me/" + Muntazer
+            else:
+                chat_info = await app.get_chat(Muntazer)
+                link = chat_info.invite_link
+            try:
+                await msg.reply(
+                    f"~︙عليك الأشتراك في قناة البوت \n~︙قناة البوت : @{Muntazer}.",
+                    disable_web_page_preview=True,
+                    reply_markup=InlineKeyboardMarkup([
+                        [InlineKeyboardButton("< Source >", url=link)]
+                    ])
+                )
+                await msg.stop_propagation()
+            except ChatWriteForbidden:
+                pass
+    except ChatAdminRequired:
+        print(f"I m not admin in the MUST_JOIN chat {Muntazer}!")
+
  
  
 @app.on_message( 
@@ -50,9 +53,12 @@ async def must_join_channel(cli, msg: Message):
 ) 
 @AdminRightsCheck 
 async def skip(cli, message: Message, _, chat_id): 
-    if not Muntazer: 
-        return 
-    try: 
+    if not Muntazer:
+        return
+    try:
+        if msg.from_user is None:
+            return
+        try:
         await cli.get_chat_member(Muntazer, message.from_user.id) 
     except UserNotParticipant: 
         if Muntazer.isalpha(): 
