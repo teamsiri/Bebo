@@ -23,6 +23,7 @@ from AarohiX.utils.inline import (
 from AarohiX.utils.logger import play_logs
 from AarohiX.utils.stream.stream import stream
 from config import BANNED_USERS, lyrical
+from config import Muntazer
 from pyrogram.errors import UserNotParticipant, ChatAdminRequired
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
