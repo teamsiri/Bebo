@@ -27,6 +27,33 @@ from pyrogram.errors import UserNotParticipant, ChatAdminRequired
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 
+async def must_join_channel(app, msg):
+    if not Muntazer:
+        return
+    try:
+        try:
+            await app.get_chat_member(Muntazer, msg.from_user.id)
+        except UserNotParticipant:
+            if Muntazer.isalpha():
+                link = "https://t.me/" + Muntazer
+            else:
+                chat_info = await app.get_chat(Muntazer)
+                link = chat_info.invite_link
+            try:
+                await msg.reply(
+                    f"~︙عليك الأشتراك في قناة البوت \n~︙قناة البوت : @{Muntazer}.",
+                    disable_web_page_preview=True,
+                    reply_markup=InlineKeyboardMarkup([
+                        [InlineKeyboardButton("< Source >", url=link)]
+                    ])
+                )
+                await msg.stop_propagation()
+            except ChatWriteForbidden:
+                pass
+    except ChatAdminRequired:
+        print(f"I m not admin in the MUST_JOIN chat {Muntazer}!")
+
+# استخدام دالة must_join_channel في دالة التشغيل المخصصة
 @app.on_message(
     command(
         [
@@ -54,6 +81,8 @@ async def play_commnd(
     url,
     fplay,
 ):
+    # التحقق من اشتراك المستخدم في القناة المطلوبة
+    await must_join_channel(client, message)
     
     mystic = await message.reply_text(
         _["play_2"].format(channel) if channel else _["play_1"]
