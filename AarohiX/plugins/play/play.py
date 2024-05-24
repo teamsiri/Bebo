@@ -24,7 +24,7 @@ from AarohiX.utils.logger import play_logs
 from AarohiX.utils.stream.stream import stream
 from config import BANNED_USERS, lyrical
 from config import Muntazer
-from pyrogram.errors import UserNotParticipant, ChatAdminRequired
+from pyrogram.errors import UserNotParticipant, ChatAdminRequired, ChatWriteForbidden
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 
@@ -32,6 +32,8 @@ async def must_join_channel(app, msg):
     if not Muntazer:
         return
     try:
+        if msg.from_user is None:
+            return
         try:
             await app.get_chat_member(Muntazer, msg.from_user.id)
         except UserNotParticipant:
@@ -53,6 +55,7 @@ async def must_join_channel(app, msg):
                 pass
     except ChatAdminRequired:
         print(f"I m not admin in the MUST_JOIN chat {Muntazer}!")
+
 
 # استخدام دالة must_join_channel في دالة التشغيل المخصصة
 @app.on_message(
@@ -137,7 +140,7 @@ async def play_commnd(
                     forceplay=fplay,
                 )
             except Exception as e:
-                ex_type = type(e).name
+                ex_type = type(e).__name__
                 err = e if ex_type == "AssistantErr" else _["general_2"].format(ex_type)
                 return await mystic.edit_text(err)
             return await mystic.delete()
