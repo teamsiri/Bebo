@@ -28,7 +28,6 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 # Command
 @app.on_message(command(["تشغيل", "alive"])
-    & filters.channel
     & ~BANNED_USERS
 )
 @PlayWrapper
