@@ -15,7 +15,7 @@ BOT_TOKEN = getenv("BOT_TOKEN", "")
 
 MUSIC_BOT_NAME = getenv("MUSIC_BOT_NAME", "bot")
 
-Muntazer = getenv("muntazer", "IFlFFII")
+Muntazer = getenv("muntazer", "wwwwwt")
 
 MONGO_DB_URI = getenv("MONGO_DB_URI", "")
 
@@ -27,7 +27,7 @@ SONG_DOWNLOAD_DURATION = int(
 
 LOGGER_ID = int(getenv("LOGGER_ID", ""))
 
-OWNER_ID = int(getenv("OWNER_ID", "1721703554"))
+OWNER_ID = int(getenv("OWNER_ID", "375338925"))
 
 BOT_USERNAME = getenv("BOT_USERNAME" , "")
 
@@ -46,8 +46,8 @@ GIT_TOKEN = getenv(
     "GIT_TOKEN", None
 )  # Fill this variable if your upstream repository is private
 
-SUPPORT_CHANNEL = getenv("SUPPORT_CHANNEL", "https://t.me/IFlFFII")
-SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/IFlFFII")
+SUPPORT_CHANNEL = getenv("SUPPORT_CHANNEL", "https://t.me/wwwwwt")
+SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/wwwwwt")
 
 AUTO_LEAVING_ASSISTANT = bool(getenv("AUTO_LEAVING_ASSISTANT", False))
 AUTO_SUGGESTION_MODE = getenv("AUTO_SUGGESTION_MODE", "True")
@@ -90,7 +90,7 @@ clean = {}
 autoclean = []
 
 START_IMG_URL = getenv(
-    "START_IMG_URL", "https://te.legra.ph/file/407ce4c57a645c11f65c0.jpg"
+    "START_IMG_URL", "https://telegra.ph/file/8629735bddf8990fe6eb2.jpg"
 )
 PING_IMG_URL = getenv(
     "PING_IMG_URL", "https://te.legra.ph/file/407ce4c57a645c11f65c0.jpg"
@@ -99,7 +99,7 @@ PLAYLIST_IMG_URL = getenv(
     "PLAYLIST_IMG_URL", "https://te.legra.ph/file/407ce4c57a645c11f65c0.jpg"
 )                          
 STATS_IMG_URL = getenv(
-    "STATS_IMG_URL", "https://te.legra.ph/file/407ce4c57a645c11f65c0.jpg"
+    "STATS_IMG_URL", "https://telegra.ph/file/8629735bddf8990fe6eb2.jpg"
 )                       
 TELEGRAM_AUDIO_URL = getenv(
     "TELEGRAM_AUDIO_URL", "https://te.legra.ph/file/407ce4c57a645c11f65c0.jpg"
